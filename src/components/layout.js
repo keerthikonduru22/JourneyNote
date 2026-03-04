@@ -2,7 +2,7 @@ import React from 'react';
 import { createHashRouter, RouterProvider, Link } from 'react-router-dom';
 import './layout.css'; 
 import Todaylist from './todaylist';
-import Weekllyplan from './weekllyplan';
+import WeeklyPlan from './weeklyplan';
 import Teamplanning from './teamplanning';
 
 export default function Layout() {
@@ -12,8 +12,8 @@ export default function Layout() {
       element: <Todaylist />
     },
     {
-      path: "/Weekllyplan",
-      element: <Weekllyplan />
+      path: "/weeklyplan",
+      element: <WeeklyPlan />
     },
     {
       path: "/Teamplanning",
@@ -26,7 +26,7 @@ export default function Layout() {
     <div className='container'>
       <ul className='first'>
         <li><Link to="/">Today list</Link></li>
-        <li><Link to="/Weekllyplan">Weekly plan</Link></li>
+        <li><Link to="/weeklyplan">Weekly plan</Link></li>
         <li><Link to="/Teamplanning">Team planning</Link></li>
                 </ul>
     </div>
