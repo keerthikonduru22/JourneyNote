@@ -1,0 +1,95 @@
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Kalnia+Glaze:wght@100..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Delicious+Handrawn&family=Kalnia+Glaze:wdth,wght@112.5,100..700&display=swap');
+
+.container3{
+    
+    display: block;
+    
+    padding: 30px;
+    margin-top: 0;
+    box-sizing: border-box;
+    background-image: url(keerthi.jpg);
+    box-sizing: border-box;
+    width: 100%;
+}
+input{
+    border: 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.648);
+    width: 200px;
+    height: 20px;
+    outline: none;
+    background: transparent;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+    
+
+.total{
+    display: grid;
+    grid-template-columns: 300px 300px 300px 300px;
+    grid-template-rows: auto auto auto auto;
+    row-gap: 50px;
+    
+    
+}
+.stylesday{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+.styleinputfields{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+} 
+.stylesweekname{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
+.daystyle{
+    font-family: "Dancing Script", serif;
+    font-size: x-large;
+    font-weight: bolder;
+    color: rgba(184, 26, 53, 0.573);
+}
+.daysstyle{
+    font-size: large;
+    font-family: "Delicious Handrawn",
+        serif; 
+        color: rgba(11, 6, 7, 0.594);
+}
+.deletestyle > img{
+    width: 12px;
+    height: 10px;
+    opacity: 0;
+    position: absolute;
+    right: 5px;
+    top: 4px;
+    
+}
+.inputstyle{
+    display: flex;
+    flex-direction: row;
+    position: relative;
+}
+
+.inputstyle:hover{
+   transform: scale(1.2);
+   background-color: rgba(140, 63, 117, 0.253);
+   box-shadow: 4px 4px 4px rgba(137, 74, 85, 0.272);
+   border: 1px solid rgba(255, 255, 255, 0.4);
+   border-radius: 5px;
+   color: white;
+   input{
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+   }
+    .deletestyle >img{
+        opacity: 1;
+    }
+}

@@ -1,0 +1,680 @@
+PRACTICAL-001
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+// Function to check if a word is a keyword
+int isKeyword(char *word) {
+    char *keywords[] = {"int", "float", "return", "if", "else", "while", "for", "do", "break",
+                        "continue", "void", "char"};
+    int numKeywords = sizeof(keywords) / sizeof(keywords[0]);
+    for (int i = 0; i < numKeywords; i++) {
+        if (strcmp(word, keywords[i]) == 0) {
+            return 1; // True, it is a keyword
+        }
+    }
+    return 0; // False, not a keyword
+}
+
+int main() {
+    char input[100], token[20];
+    int i = 0, j = 0;
+
+    printf("Enter the input string: ");
+    fgets(input, sizeof(input), stdin);
+
+    printf("\nTokens:\n");
+    while (input[i] != '\0') {
+        if (isalnum(input[i])) { // If alphanumeric character, build the token
+            token[j++] = input[i];
+        } else if (isspace(input[i]) || input[i] == '\n') { // If space or newline
+            if (j != 0) { // If token exists, process it
+                token[j] = '\0'; // Null-terminate the token
+                if (isKeyword(token)) {
+                    printf("Keyword: %s\n", token);
+                } else if (isdigit(token[0])) {
+                    printf("Number: %s\n", token);
+                } else {
+                    printf("Identifier: %s\n", token);
+                }
+                j = 0; // Reset token index
+            }
+        } else { // For special characters or operators
+            if (j != 0) { // Process the existing token first
+                token[j] = '\0';
+                if (isKeyword(token)) {
+                    printf("Keyword: %s\n", token);
+                } else if (isdigit(token[0])) {
+                    printf("Number: %s\n", token);
+                } else {
+                    printf("Identifier: %s\n", token);
+                }
+                j = 0; // Reset token index
+            }
+            printf("Special Character or Operator: %c\n", input[i]);
+        }
+        i++;
+    }
+
+    // Process the last token if it exists
+    if (j != 0) {
+        token[j] = '\0';
+        if (isKeyword(token)) {
+            printf("Keyword: %s\n", token);
+        } else if (isdigit(token[0])) {
+            printf("Number: %s\n", token);
+        } else {
+            printf("Identifier: %s\n", token);
+        }
+    }
+
+    return 0;
+}
+COMMAND: // int a = 10 + b;
+---------------------------------------------------------------------------------------------------------
+PRACTICAL-02
+#include <stdio.h>
+#include <ctype.h>
+
+int main() {
+    char input[100];
+    int digitCount = 0, vowelCount = 0, symbolCount = 0;
+
+    printf("Enter a string: ");
+    fgets(input, sizeof(input), stdin);
+
+    for (int i = 0; input[i] != '\0'; i++) {
+        if (isdigit(input[i])) { 
+            digitCount++;
+        } else if (isalpha(input[i])) {
+            char ch = tolower(input[i]);
+            if (ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u') {
+                vowelCount++;
+            }
+        } else if (!isspace(input[i]) && input[i] != '\n') {
+            symbolCount++;
+        }
+    }
+
+    printf("\nResults:\n");
+    printf("Digits: %d\n", digitCount);
+    printf("Vowels: %d\n", vowelCount);
+    printf("Symbols: %d\n", symbolCount);
+
+    return 0;
+}
+
+COMMAND: // Hello World! 12345 @#$%^ Vowels: A, E, I, O, U.
+--------------------------------------------------------------------------------------------------------------
+PRACTICAL-03
+#include <stdio.h>
+#include <ctype.h>
+
+int main() {
+    char input[100];
+    int digitCount = 0, vowelCount = 0, symbolCount = 0;
+
+    printf("Enter a string: ");
+    fgets(input, sizeof(input), stdin);
+
+    for (int i = 0; input[i] != '\0'; i++) {
+        if (isdigit(input[i])) { 
+            digitCount++;
+        } else if (isalpha(input[i])) {
+            char ch = tolower(input[i]);
+            if (ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u') {
+                vowelCount++;
+            }
+        } else if (!isspace(input[i]) && input[i] != '\n') {
+            symbolCount++;
+        }
+    }
+
+    printf("\nResults:\n");
+    printf("Digits: %d\n", digitCount);
+    printf("Vowels: %d\n", vowelCount);
+    printf("Symbols: %d\n", symbolCount);
+
+    return 0;
+}
+
+COMMAND: // Hello World! 12345 @#$%^ Vowels: A, E, I, O, U.
+-------------------------------------------------------------------------------------------------------------------------
+PRACTICAL-04
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX 10
+#define TERMINAL 256
+
+// Global variables
+char productions[MAX][MAX];
+int numProductions = 0;
+char first[MAX][MAX];
+char follow[MAX][MAX];
+char parseTable[MAX][TERMINAL];
+
+// Function prototypes
+void computeFirst();
+void computeFollow();
+void createParseTable();
+void parseString(const char *input);
+int isNonTerminal(char symbol);
+void addToSet(char *set, char symbol);
+
+int main() {
+    printf("Enter the number of productions: ");
+    if (scanf("%d", &numProductions) != 1 || numProductions <= 0 || numProductions > MAX) {
+        printf("Error: Invalid number of productions.\n");
+        return 1;
+    }
+    getchar(); // Consume the newline character after the number
+
+    printf("Enter the productions (e.g., E=TR):\n");
+    for (int i = 0; i < numProductions; i++) {
+        if (scanf("%s", productions[i]) != 1 || strlen(productions[i]) >= MAX) {
+            printf("Error: Invalid production entered.\n");
+            return 1;
+        }
+    }
+
+    computeFirst();
+    computeFollow();
+    createParseTable();
+
+    printf("Parse table:\n");
+    for (int i = 0; i < numProductions; i++) {
+        for (int j = 0; j < TERMINAL; j++) {
+            if (parseTable[i][j] != '\0') {
+                printf("M[%c,%c] = %s\n", productions[i][0], j, parseTable[i][j] == ' ' ? "ε" : productions[i]);
+            }
+        }
+    }
+
+    char input[MAX];
+    printf("Enter input string to parse: ");
+    if (scanf("%s", input) != 1 || strlen(input) >= MAX) {
+        printf("Error: Invalid input string.\n");
+        return 1;
+    }
+    parseString(input);
+
+    return 0;
+}
+
+void computeFirst() {
+    printf("Computing First sets...\n");
+    // Placeholder implementation. Actual logic for computing FIRST sets goes here.
+}
+
+void computeFollow() {
+    printf("Computing Follow sets...\n");
+    // Placeholder implementation. Actual logic for computing FOLLOW sets goes here.
+}
+
+void createParseTable() {
+    printf("Creating Parse Table...\n");
+    // Placeholder implementation. Actual logic for creating the parse table goes here.
+}
+
+void parseString(const char *input) {
+    printf("Parsing the string '%s'...\n", input);
+    // Placeholder implementation. Actual logic for parsing the input string goes here.
+}
+
+int isNonTerminal(char symbol) {
+    return isupper(symbol); // Non-terminals are uppercase letters
+}
+
+void addToSet(char *set, char symbol) {
+    if (!strchr(set, symbol)) {
+        size_t len = strlen(set);
+        set[len] = symbol;
+        set[len + 1] = '\0';
+    }
+}
+COMMAND:
+// 3
+// E=TR
+// R=+TR
+// T=a
+// a+a
+
+
+---------------------------------------------------------------------------------------------------
+PRACTICAL-05 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char ip_sym[15]; // Input symbol string
+int ip_ptr = 0;  // Pointer to input string
+char op[50], tmp[50];
+
+// Function prototypes
+void e();
+void e_prime();
+void t();
+void t_prime();
+void f();
+void advance();
+
+void e() {
+    strcpy(op, "TE'"); // Grammar production E -> TE'
+    printf("E=%-25s", op);
+    printf("E->TE'\n");
+    t();
+    e_prime();
+}
+
+void e_prime() {
+    int i, n = 0, l;
+
+    // Remove 'e' from the operator string
+    for (i = 0; i <= strlen(op); i++)
+        if (op[i] != 'e')
+            tmp[n++] = op[i];
+    tmp[n] = '\0';
+    strcpy(op, tmp);
+    l = strlen(op);
+
+    // Locate E' in the string
+    for (n = 0; n < l && op[n] != 'E'; n++);
+
+    if (ip_sym[ip_ptr] == '+') { // E' -> +TE'
+        i = n + 2;
+        do {
+            op[i + 2] = op[i];
+            i++;
+        } while (i <= l);
+        op[n++] = '+';
+        op[n++] = 'T';
+        op[n++] = 'E';
+        op[n++] = '\'';
+        op[n] = '\0';
+
+        printf("E=%-25s", op);
+        printf("E'->+TE'\n");
+        advance();
+        t();
+        e_prime();
+    } else { // E' -> e (empty)
+        op[n] = 'e';
+        op[n + 1] = '\0';
+
+        printf("E=%-25s", op);
+        printf("E'->e\n");
+    }
+}
+
+void t() {
+    int i, n = 0, l;
+
+    // Remove 'e' from the operator string
+    for (i = 0; i <= strlen(op); i++)
+        if (op[i] != 'e')
+            tmp[n++] = op[i];
+    tmp[n] = '\0';
+    strcpy(op, tmp);
+    l = strlen(op);
+
+    // Locate T in the string
+    for (n = 0; n < l && op[n] != 'T'; n++);
+    i = n + 1;
+    do {
+        op[i + 2] = op[i];
+        i++;
+    } while (i < l);
+
+    op[n++] = 'F';
+    op[n++] = 'T';
+    op[n++] = '\'';
+    op[n] = '\0';
+
+    printf("E=%-25s", op);
+    printf("T->FT'\n");
+    f();
+    t_prime();
+}
+
+void t_prime() {
+    int i, n = 0, l;
+
+    // Remove 'e' from the operator string
+    for (i = 0; i <= strlen(op); i++)
+        if (op[i] != 'e')
+            tmp[n++] = op[i];
+    tmp[n] = '\0';
+    strcpy(op, tmp);
+    l = strlen(op);
+
+    // Locate T' in the string
+    for (n = 0; n < l && op[n] != 'T'; n++);
+
+    if (ip_sym[ip_ptr] == '*') { // T' -> *FT'
+        i = n + 2;
+        do {
+            op[i + 2] = op[i];
+            i++;
+        } while (i < l);
+        op[n++] = '*';
+        op[n++] = 'F';
+        op[n++] = 'T';
+        op[n++] = '\'';
+        op[n] = '\0';
+
+        printf("E=%-25s", op);
+        printf("T'->*FT'\n");
+        advance();
+        f();
+        t_prime();
+    } else { // T' -> e (empty)
+        op[n] = 'e';
+        op[n + 1] = '\0';
+
+        printf("E=%-25s", op);
+        printf("T'->e\n");
+    }
+}
+
+void f() {
+    int i, n = 0, l;
+
+    // Remove 'e' from the operator string
+    for (i = 0; i <= strlen(op); i++)
+        if (op[i] != 'e')
+            tmp[n++] = op[i];
+    tmp[n] = '\0';
+    strcpy(op, tmp);
+    l = strlen(op);
+
+    // Locate F in the string
+    for (n = 0; n < l && op[n] != 'F'; n++);
+
+    if (ip_sym[ip_ptr] == 'i' || ip_sym[ip_ptr] == 'I') { // F -> i
+        op[n] = 'i';
+        op[n + 1] = '\0';
+
+        printf("E=%-25s", op);
+        printf("F->i\n");
+        advance();
+    } else if (ip_sym[ip_ptr] == '(') { // F -> (E)
+        advance();
+        e();
+        if (ip_sym[ip_ptr] == ')') {
+            advance();
+            i = n + 2;
+            do {
+                op[i + 2] = op[i];
+                i++;
+            } while (i <= l);
+
+            op[n++] = '(';
+            op[n++] = 'E';
+            op[n++] = ')';
+            op[n] = '\0';
+
+            printf("E=%-25s", op);
+            printf("F->(E)\n");
+        } else {
+            printf("\n\tSyntax error\n");
+            exit(1);
+        }
+    } else {
+        printf("\n\tSyntax error\n");
+        exit(1);
+    }
+}
+
+void advance() {
+    ip_ptr++; // Move to the next input character
+}
+
+int main() {
+    printf("\nGrammar without left recursion:");
+    printf("\n\t E->TE' \n\t E'->+TE|e \n\t T->FT' \n\t T'->*FT|e \n\t F->(E)|i\n");
+
+    printf("Enter the input expression: ");
+    fgets(ip_sym, sizeof(ip_sym), stdin);
+    ip_sym[strcspn(ip_sym, "\n")] = 0; // Remove trailing newline
+
+    printf("Expressions\t Sequence of production rules\n");
+    e(); // Start parsing from the start symbol 'E'
+    return 0;
+}
+COMMAND:
+// i+i*I
+-------------------------------------------------------------------------------------------------------------
+PRACTICAL-06
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX 20
+
+int main() {
+    char stack[MAX], ip[MAX], opt[10][10][2], ter[10];
+    int i, j, k, n, top = 0, row, col, len;
+
+    // Initialize arrays
+    for (i = 0; i < 10; i++) {
+        stack[i] = '\0';
+        ip[i] = '\0';
+        for (j = 0; j < 10; j++) {
+            opt[i][j][0] = '\0';
+            opt[i][j][1] = '\0';
+        }
+    }
+
+    printf("Enter the number of terminals: ");
+    scanf("%d", &n);
+
+    printf("\nEnter the terminals: ");
+    scanf("%s", ter);
+
+    printf("\nEnter the table values:\n");
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < n; j++) {
+            printf("Enter the value for %c %c: ", ter[i], ter[j]);
+            scanf("%s", opt[i][j]);
+        }
+    }
+
+    // Print the operator precedence table
+    printf("\nOPERATOR PRECEDENCE TABLE:\n");
+    printf("\t");
+    for (i = 0; i < n; i++) {
+        printf("%c\t", ter[i]);
+    }
+    printf("\n");
+
+    for (i = 0; i < n; i++) {
+        printf("%c\t", ter[i]);
+        for (j = 0; j < n; j++) {
+            printf("%s\t", opt[i][j]);
+        }
+        printf("\n");
+    }
+
+    // Input string processing
+    stack[top] = '$'; // Initialize stack with $
+    printf("\n\nEnter the input string (append with $): ");
+    scanf("%s", ip);
+
+    i = 0;
+    printf("\nSTACK\t\t\tINPUT STRING\t\t\tACTION\n");
+    printf("%s\t\t\t%s\t\t\t", stack, ip);
+
+    len = strlen(ip);
+    while (i <= len) {
+        // Find the row and column in the table
+        for (k = 0; k < n; k++) {
+            if (stack[top] == ter[k]) row = k;
+            if (ip[i] == ter[k]) col = k;
+        }
+
+        // Check for acceptance
+        if ((stack[top] == '$') && (ip[i] == '$')) {
+            printf("String is ACCEPTED\n");
+            break;
+        } else if ((opt[row][col][0] == '<') || (opt[row][col][0] == '=')) {
+            // Shift operation
+            stack[++top] = opt[row][col][0];
+            stack[++top] = ip[i];
+            ip[i] = ' ';
+            printf("Shift %c\n", stack[top]);
+            i++;
+        } else if (opt[row][col][0] == '>') {
+            // Reduce operation
+            while (stack[top] != '<') {
+                --top;
+            }
+            top = top - 1;
+            printf("Reduce\n");
+        } else {
+            // String not accepted
+            printf("\nString is NOT accepted\n");
+            break;
+        }
+
+        printf("%s\t\t\t%s\t\t\t", stack, ip);
+    }
+
+    return 0;
+}
+COMMAND:
+// 3
+// i+$
+// >
+// <
+// >
+// <
+// >
+// >
+// <
+// <
+// >
+// i+i$
+----------------------------------------------------------------------------------------------------------
+PRACTICAL-07
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX 100
+
+char stack[MAX];
+int top = -1;
+char input[MAX];
+char action[12][9][5] = {
+/* STATE i     +     *     (     )     $     E     T     F */
+/* 0 */ {"s5", "",   "",   "s4", "",   "",   "1",  "2",  "3"},
+/* 1 */ {"",   "s6", "",   "",   "",   "acc","",   "",   "" },
+/* 2 */ {"",   "r2", "s7", "",   "r2", "r2", "",   "",   "" },
+/* 3 */ {"",   "r4", "r4", "",   "r4", "r4", "",   "",   "" },
+/* 4 */ {"s5", "",   "",   "s4", "",   "",   "8",  "2",  "3"},
+/* 5 */ {"",   "r6", "r6", "",   "r6", "r6", "",   "",   "" },
+/* 6 */ {"s5", "",   "",   "s4", "",   "",   "",   "9",  "3"},
+/* 7 */ {"s5", "",   "",   "s4", "",   "",   "",   "",   "10"},
+/* 8 */ {"",   "s6", "",   "",   "s11","",   "",   "",   "" },
+/* 9 */ {"",   "r1", "s7", "",   "r1", "r1", "",   "",   "" },
+/*10 */{"",   "r3", "r3", "",   "r3", "r3", "",   "",   "" },
+/*11 */{"",   "r5", "r5", "",   "r5", "r5", "",   "",   "" }
+};
+
+typedef struct {
+    char lhs;
+    char rhs[10];
+} Rule;
+
+Rule rules[] = {
+    {'E', "E+T"},   // r1
+    {'E', "T"},     // r2
+    {'T', "T*F"},   // r3
+    {'T', "F"},     // r4
+    {'F', "(E)"},   // r5
+    {'F', "i"}      // r6
+};
+
+int getCol(char sym) {
+    switch (sym) {
+        case 'i': return 0;
+        case '+': return 1;
+        case '*': return 2;
+        case '(': return 3;
+        case ')': return 4;
+        case '$': return 5;
+        case 'E': return 6;
+        case 'T': return 7;
+        case 'F': return 8;
+        default: return -1;
+    }
+}
+
+void push(char item) {
+    stack[++top] = item;
+}
+
+char pop() {
+    return stack[top--];
+}
+
+void display(int iptr) {
+    printf("\n");
+    for (int i = 0; i <= top; i++)
+        printf("%c", stack[i]);
+    printf("\t\t");
+    for (int i = iptr; input[i] != '\0'; i++)
+        printf("%c", input[i]);
+}
+
+int main() {
+    int iptr = 0;
+    printf("Enter the input string (e.g., i+i*i): ");
+    scanf("%s", input);
+    strcat(input, "$");
+
+    push('0');
+
+    printf("\nStack\t\tInput");
+    display(iptr);
+
+    while (1) {
+        int state = stack[top] - '0';
+        int col = getCol(input[iptr]);
+        char *act = action[state][col];
+
+        if (act[0] == 's') {
+            push(input[iptr]);
+            push(act[1]);
+            iptr++;
+            display(iptr);
+        } else if (act[0] == 'r') {
+            int ruleNo = act[1] - '0' - 1;
+            int len = strlen(rules[ruleNo].rhs);
+
+            for (int i = 0; i < 2 * len; i++)
+                pop();
+
+            int st = stack[top] - '0';
+            push(rules[ruleNo].lhs);
+            int goTo = getCol(rules[ruleNo].lhs);
+            push(action[st][goTo][0]);
+
+            display(iptr);
+        } else if (strcmp(act, "acc") == 0) {
+            printf("\n\nInput accepted.\n");
+            break;
+        } else {
+            printf("\n\nError: invalid input.\n");
+            break;
+        }
+    }
+
+    return 0;
+}
+COMMAND: // command = i+i*i
+-----------------------------------------------------------------------------------------------------------------------------

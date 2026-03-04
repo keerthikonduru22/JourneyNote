@@ -1,0 +1,117 @@
+.container2{
+  display: block;
+  background-color: rgba(54, 52, 52, 0.244);
+  width: 4%;
+  height: 100vh;
+  margin: 0;
+  padding: 5px;
+  float: left;
+  position: relative;
+}
+/* .totalcalender{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+} */
+.imgstyle{
+    position: relative;
+    margin-top: 250px;
+    
+}
+@keyframes clipPathAnimation {
+    0% {
+        clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+    }
+
+    100% {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    }
+}
+/* .modal{
+    display: flex;
+    flex-direction: row;
+    z-index: 1000;
+    margin-left: 310px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    
+}
+.modal1{
+    margin-top: 160px;
+    
+} */
+
+
+/* Modal.module.css */
+.modalContent {
+    margin: 0;
+    background-color: rgb(243, 243, 238);
+    display: flex;
+    flex-direction: column;
+    width: 350px;
+    height: auto;
+    gap: 10px;
+    border-radius: 10px;
+    border: 1px solid rgb(209, 163, 163);
+    overflow: hidden;
+    margin-bottom: 50px;
+    padding-bottom: 10px;
+    z-index: 1000;
+    margin-top: 100px;
+    position: absolute;
+    left: 70px;
+    bottom: 100px;
+    animation: clipPathAnimation 0.5s ease forwards;
+}
+.calendar {
+    background-color: rgba(165, 37, 107, 0.66);
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 15px;
+    color: white;
+
+}
+
+
+
+.days {
+    display: grid;
+    grid-template-columns: 20px 20px 20px 20px 20px 20px 20px;
+    justify-content: center;
+    align-items: center;
+    column-gap: 32px;
+    
+}
+
+.week {
+    
+    display: grid;
+    grid-template-columns: repeat(7, 18px);
+    grid-template-rows: repeat(4, 2px);
+    justify-content: center;
+    align-items: center;
+    column-gap: 34px;
+    padding: 20px;
+    background-color: #f0f0f0;
+}
+.week *{
+    text-align: center;
+}
+.week:active{
+   border: 1px solid rgb(247, 244, 244);
+   background-color: white;
+   border-radius: 5px;
+   
+}
+
+.highlighted {
+    background-color: rgba(156, 36, 92, 0.642);
+    border-radius: 5px;
+}
