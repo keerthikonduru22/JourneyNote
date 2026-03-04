@@ -1,12 +1,12 @@
 import React from 'react';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createHashRouter, RouterProvider, Link } from 'react-router-dom';
 import './layout.css'; 
 import Todaylist from './todaylist';
 import Weekllyplan from './weekllyplan';
 import Teamplanning from './teamplanning';
 
 export default function Layout() {
-  const router = createBrowserRouter([
+  const router = createHashRouter([
     {
       path: "/",
       element: <Todaylist />
@@ -25,9 +25,9 @@ export default function Layout() {
       <div>
     <div className='container'>
       <ul className='first'>
-        <li><a href="/">Today list</a></li>
-        <li><a href="/Weekllyplan">Weekly plan</a></li>
-        <li><a href="/Teamplanning">Team planning</a></li>
+        <li><Link to="/">Today list</Link></li>
+        <li><Link to="/Weekllyplan">Weekly plan</Link></li>
+        <li><Link to="/Teamplanning">Team planning</Link></li>
                 </ul>
     </div>
       <div className='main-content'>
